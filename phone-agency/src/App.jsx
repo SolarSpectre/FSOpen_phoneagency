@@ -43,16 +43,27 @@ const App = () => {
     const personObject = {
       name: newName,
       number: newNumber,
-      id: (persons.length + 1).toString() 
+      id: (persons.length + 1).toString(),
     };
 
-    const existingPerson = persons.find(person => person.name === newName);
+    const existingPerson = persons.find((person) => person.name === newName);
 
     if (existingPerson) {
-      if (window.confirm(`${existingPerson.name} is already added to phonebook, replace the old number with a new one?`)) {
+      if (
+        window.confirm(
+          `${existingPerson.name} is already added to phonebook, replace the old number with a new one?`,
+        )
+      ) {
         try {
-          const updatedPerson = await personAPI.update(existingPerson.id, { ...existingPerson, number: newNumber });
-          setPersons(persons.map(person => person.id !== existingPerson.id ? person : updatedPerson));
+          const updatedPerson = await personAPI.update(existingPerson.id, {
+            ...existingPerson,
+            number: newNumber,
+          });
+          setPersons(
+            persons.map((person) =>
+              person.id !== existingPerson.id ? person : updatedPerson,
+            ),
+          );
           setNewName("");
           setNewNumber("");
           setMessageType("success");
@@ -82,6 +93,7 @@ const App = () => {
           setMessage(null);
         }, 5000);
       } catch (error) {
+        console.log(error.response.data.error);
         setMessageType("error");
         setMessage("Failed to add person. Please try again.");
         setTimeout(() => {
@@ -92,11 +104,11 @@ const App = () => {
   };
 
   const deletePerson = async (id) => {
-    const person = persons.find(p => p.id === id);
+    const person = persons.find((p) => p.id === id);
     if (window.confirm(`Delete ${person.name}?`)) {
       try {
         await personAPI.remove(id);
-        setPersons(persons.filter(p => p.id !== id));
+        setPersons(persons.filter((p) => p.id !== id));
         setMessageType("success");
         setMessage(`Deleted '${person.name}'`);
         setTimeout(() => {
@@ -104,7 +116,9 @@ const App = () => {
         }, 5000);
       } catch (error) {
         setMessageType("error");
-        setMessage(`Information of '${person.name}' has already been removed from server`);
+        setMessage(
+          `Information of '${person.name}' has already been removed from server`,
+        );
         setTimeout(() => {
           setMessage(null);
         }, 5000);
@@ -113,7 +127,7 @@ const App = () => {
   };
 
   const personsToShow = persons.filter((person) =>
-    person.name.toLowerCase().includes(searchTerm.toLowerCase())
+    person.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
@@ -135,3 +149,4 @@ const App = () => {
 };
 
 export default App;
+
